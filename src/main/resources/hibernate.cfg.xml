@@ -6,13 +6,13 @@
 <hibernate-configuration>
     <session-factory>
         <!-- Database connection settings -->
-        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/fsadexam</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">sat@789S</property>
 
-        <!-- Dialect for MySQL -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- Dialect for PostgreSQL -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
         <!-- Echo all executed SQL statements -->
         <property name="hibernate.show_sql">false</property>
@@ -28,6 +28,6 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <!-- Mapping class -->
-        <mapping class="com.klef.fsad.exam.Supplier"/>
+        <mapping class="com.klef.fsad.exam.Inventory"/>
     </session-factory>
 </hibernate-configuration>
