@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 /**
  * ClientDemo Class
- * Demonstrates Insert and Update operations on Supplier entity using Hibernate
+ * Demonstrates insert and update operations on Inventory entity using Hibernate
  */
 public class ClientDemo {
 
@@ -22,7 +22,7 @@ public class ClientDemo {
         try {
             sessionFactory = new Configuration()
                     .configure("hibernate.cfg.xml")
-                    .addAnnotatedClass(Supplier.class)
+                    .addAnnotatedClass(Inventory.class)
                     .buildSessionFactory();
         } catch (Exception e) {
             System.err.println("SessionFactory creation failed: " + e);
@@ -35,17 +35,17 @@ public class ClientDemo {
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         
-        printHeader("FSAD HIBERNATE SUPPLIER MANAGEMENT SYSTEM");
+        printHeader("FSAD HIBERNATE INVENTORY MANAGEMENT SYSTEM");
 
         try {
             boolean running = true;
             
             while (running) {
                 printSection("MAIN MENU");
-                System.out.println("\n  1. View All Suppliers");
-                System.out.println("  2. Insert New Supplier");
-                System.out.println("  3. Update Supplier Name");
-                System.out.println("  4. Update Supplier Status");
+                System.out.println("\n  1. View All Inventory Items");
+                System.out.println("  2. Insert New Inventory Item");
+                System.out.println("  3. Update Inventory Name");
+                System.out.println("  4. Update Inventory Status");
                 System.out.println("  5. Exit");
                 System.out.print("\n  Enter your choice (1-5): ");
                 
@@ -53,15 +53,15 @@ public class ClientDemo {
                 
                 switch (choice) {
                     case "1":
-                        // View All Suppliers
-                        printSection("ALL SUPPLIERS IN DATABASE");
-                        demo.displayAllSuppliers();
+                        // View All Inventory Items
+                        printSection("ALL INVENTORY ITEMS IN DATABASE");
+                        demo.displayAllInventory();
                         break;
                         
                     case "2":
-                        // Insert New Supplier
-                        printSection("INSERT NEW SUPPLIER");
-                        System.out.println("\n🔹 Enter Supplier Details:");
+                        // Insert New Inventory Item
+                        printSection("INSERT NEW INVENTORY ITEM");
+                        System.out.println("\n🔹 Enter Inventory Details:");
                         System.out.print("  Name: ");
                         String name = scanner.nextLine();
                         
@@ -84,30 +84,30 @@ public class ClientDemo {
                         System.out.print("  Address: ");
                         String address = scanner.nextLine();
                         
-                        int supplierId = demo.insertSupplier(name, description, date, status, email, phone, address);
-                        System.out.println("\n✓ Supplier inserted successfully with ID: " + supplierId);
+                        int inventoryId = demo.insertInventory(name, description, date, status, email, phone, address);
+                        System.out.println("\n✓ Inventory item inserted successfully with ID: " + inventoryId);
                         break;
                         
                     case "3":
-                        // Update Supplier Name
-                        printSection("UPDATE SUPPLIER NAME");
-                        System.out.print("\nEnter Supplier ID: ");
+                        // Update Inventory Name
+                        printSection("UPDATE INVENTORY NAME");
+                        System.out.print("\nEnter Inventory ID: ");
                         int updateId1 = Integer.parseInt(scanner.nextLine());
                         System.out.print("Enter New Name: ");
                         String newName = scanner.nextLine();
-                        demo.updateSupplierName(updateId1, newName);
-                        System.out.println("\n✓ Supplier Name updated successfully!");
+                        demo.updateInventoryName(updateId1, newName);
+                        System.out.println("\n✓ Inventory name updated successfully!");
                         break;
                         
                     case "4":
-                        // Update Supplier Status
-                        printSection("UPDATE SUPPLIER STATUS");
-                        System.out.print("\nEnter Supplier ID: ");
+                        // Update Inventory Status
+                        printSection("UPDATE INVENTORY STATUS");
+                        System.out.print("\nEnter Inventory ID: ");
                         int updateId2 = Integer.parseInt(scanner.nextLine());
                         System.out.print("Enter New Status (Active/Pending/Inactive): ");
                         String newStatus = scanner.nextLine();
-                        demo.updateSupplierStatus(updateId2, newStatus);
-                        System.out.println("\n✓ Supplier Status updated successfully!");
+                        demo.updateInventoryStatus(updateId2, newStatus);
+                        System.out.println("\n✓ Inventory status updated successfully!");
                         break;
                         
                     case "5":
@@ -168,60 +168,59 @@ public class ClientDemo {
     }
 
     /**
-     * Insert a new Supplier record into the database
-     * @return the generated supplier ID
+     * Insert a new inventory record into the database
+     * @return the generated inventory ID
      */
-    public int insertSupplier(String name, String description, Date date, 
+    public int insertInventory(String name, String description, Date date,
                                String status, String email, String phone, String address) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
-        int supplierId = 0;
+        int inventoryId = 0;
 
         try {
             transaction = session.beginTransaction();
 
-            // Create a new Supplier object
-            Supplier supplier = new Supplier(name, description, date, status, email, phone, address);
+            Inventory inventory = new Inventory(name, description, date, status, email, phone, address);
 
-            // Save the supplier (ID will be auto-generated)
-            supplierId = (int) session.save(supplier);
+            // Save the inventory item (ID will be auto-generated)
+            inventoryId = (int) session.save(inventory);
 
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.err.println("Error inserting supplier: " + e.getMessage());
+            System.err.println("Error inserting inventory item: " + e.getMessage());
             e.printStackTrace();
         } finally {
             session.close();
         }
 
-        return supplierId;
+        return inventoryId;
     }
 
     /**
-     * Update Supplier Name based on ID
+    * Update inventory name based on ID
      */
-    public void updateSupplierName(int supplierId, String newName) {
+    public void updateInventoryName(int inventoryId, String newName) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
 
         try {
             transaction = session.beginTransaction();
 
-            // Retrieve the supplier by ID
-            Supplier supplier = session.get(Supplier.class, supplierId);
+            // Retrieve inventory by ID
+            Inventory inventory = session.get(Inventory.class, inventoryId);
 
-            if (supplier != null) {
-                String oldName = supplier.getName();
+            if (inventory != null) {
+                String oldName = inventory.getName();
                 // Update the name
-                supplier.setName(newName);
-                session.update(supplier);
+                inventory.setName(newName);
+                session.update(inventory);
                 System.out.println("  Old Name: " + oldName);
                 System.out.println("  New Name: " + newName);
             } else {
-                System.out.println("  ✗ Supplier not found with ID: " + supplierId);
+                System.out.println("  ✗ Inventory item not found with ID: " + inventoryId);
             }
 
             transaction.commit();
@@ -229,7 +228,7 @@ public class ClientDemo {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.err.println("Error updating supplier name: " + e.getMessage());
+            System.err.println("Error updating inventory name: " + e.getMessage());
             e.printStackTrace();
         } finally {
             session.close();
@@ -237,27 +236,27 @@ public class ClientDemo {
     }
 
     /**
-     * Update Supplier Status based on ID
+    * Update inventory status based on ID
      */
-    public void updateSupplierStatus(int supplierId, String newStatus) {
+    public void updateInventoryStatus(int inventoryId, String newStatus) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
 
         try {
             transaction = session.beginTransaction();
 
-            // Retrieve the supplier by ID
-            Supplier supplier = session.get(Supplier.class, supplierId);
+            // Retrieve inventory by ID
+            Inventory inventory = session.get(Inventory.class, inventoryId);
 
-            if (supplier != null) {
-                String oldStatus = supplier.getStatus();
+            if (inventory != null) {
+                String oldStatus = inventory.getStatus();
                 // Update the status
-                supplier.setStatus(newStatus);
-                session.update(supplier);
+                inventory.setStatus(newStatus);
+                session.update(inventory);
                 System.out.println("  Old Status: " + oldStatus);
                 System.out.println("  New Status: " + newStatus);
             } else {
-                System.out.println("  ✗ Supplier not found with ID: " + supplierId);
+                System.out.println("  ✗ Inventory item not found with ID: " + inventoryId);
             }
 
             transaction.commit();
@@ -265,7 +264,7 @@ public class ClientDemo {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.err.println("Error updating supplier status: " + e.getMessage());
+            System.err.println("Error updating inventory status: " + e.getMessage());
             e.printStackTrace();
         } finally {
             session.close();
@@ -273,47 +272,47 @@ public class ClientDemo {
     }
 
     /**
-     * Display all Suppliers from the database
+     * Display all inventory items from the database
      */
-    public void displayAllSuppliers() {
+    public void displayAllInventory() {
         Session session = sessionFactory.openSession();
 
         try {
             @SuppressWarnings("unchecked")
-            java.util.List<Supplier> suppliers = session.createQuery("FROM Supplier").list();
+            java.util.List<Inventory> inventoryItems = session.createQuery("FROM Inventory").list();
 
-            if (suppliers.isEmpty()) {
-                System.out.println("\n  No suppliers found in database.");
+            if (inventoryItems.isEmpty()) {
+                System.out.println("\n  No inventory items found in database.");
             } else {
-                System.out.println("\n  Total Suppliers: " + suppliers.size());
+                System.out.println("\n  Total Inventory Items: " + inventoryItems.size());
                 System.out.println("\n" + " ".repeat(2) + String.format("%-5s %-25s %-20s %-15s", "ID", "NAME", "EMAIL", "STATUS"));
                 System.out.println(" ".repeat(2) + "-".repeat(65));
                 
-                for (Supplier supplier : suppliers) {
+                for (Inventory inventory : inventoryItems) {
                     System.out.println(" ".repeat(2) + String.format("%-5d %-25s %-20s %-15s", 
-                        supplier.getId(), 
-                        truncate(supplier.getName(), 25),
-                        truncate(supplier.getEmail(), 20),
-                        supplier.getStatus()));
+                        inventory.getId(),
+                        truncate(inventory.getName(), 25),
+                        truncate(inventory.getEmail(), 20),
+                        inventory.getStatus()));
                 }
                 
                 System.out.println("\n  Detailed Information:");
                 System.out.println(" ".repeat(2) + "-".repeat(65));
-                for (int i = 0; i < suppliers.size(); i++) {
-                    Supplier s = suppliers.get(i);
-                    System.out.println("\n  [" + (i + 1) + "] Supplier Details:");
-                    System.out.println("      ID          : " + s.getId());
-                    System.out.println("      Name        : " + s.getName());
-                    System.out.println("      Description : " + s.getDescription());
-                    System.out.println("      Email       : " + s.getEmail());
-                    System.out.println("      Phone       : " + s.getPhone());
-                    System.out.println("      Address     : " + s.getAddress());
-                    System.out.println("      Status      : " + s.getStatus());
-                    System.out.println("      Date        : " + s.getDate());
+                for (int i = 0; i < inventoryItems.size(); i++) {
+                    Inventory item = inventoryItems.get(i);
+                    System.out.println("\n  [" + (i + 1) + "] Inventory Details:");
+                    System.out.println("      ID          : " + item.getId());
+                    System.out.println("      Name        : " + item.getName());
+                    System.out.println("      Description : " + item.getDescription());
+                    System.out.println("      Email       : " + item.getEmail());
+                    System.out.println("      Phone       : " + item.getPhone());
+                    System.out.println("      Address     : " + item.getAddress());
+                    System.out.println("      Status      : " + item.getStatus());
+                    System.out.println("      Date        : " + item.getDate());
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error fetching suppliers: " + e.getMessage());
+            System.err.println("Error fetching inventory items: " + e.getMessage());
             e.printStackTrace();
         } finally {
             session.close();

@@ -4,16 +4,16 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 /**
- * Supplier Entity Class
- * Represents a supplier in the database with auto-generated ID
+ * Inventory Entity Class
+ * Represents an inventory record in the database with auto-generated ID
  */
 @Entity
-@Table(name = "supplier")
-public class Supplier {
+@Table(name = "inventory")
+public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supplier_id")
+    @Column(name = "inventory_id")
     private int id;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -22,7 +22,7 @@ public class Supplier {
     @Column(name = "description", length = 500)
     private String description;
 
-    @Column(name = "supplier_date")
+    @Column(name = "inventory_date")
     @Temporal(TemporalType.DATE)
     private Date date;
 
@@ -39,11 +39,11 @@ public class Supplier {
     private String address;
 
     // Default Constructor
-    public Supplier() {
+    public Inventory() {
     }
 
     // Parameterized Constructor
-    public Supplier(String name, String description, Date date, String status, String email, String phone, String address) {
+    public Inventory(String name, String description, Date date, String status, String email, String phone, String address) {
         this.name = name;
         this.description = description;
         this.date = date;
@@ -120,7 +120,7 @@ public class Supplier {
 
     @Override
     public String toString() {
-        return "Supplier{" +
+        return "Inventory{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
